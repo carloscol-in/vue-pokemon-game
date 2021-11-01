@@ -1,16 +1,74 @@
 <template>
   <div class="options-container">
     <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
+      <li v-for="option in options" :key="option.id" @click="this.checkOption(option.id)" disabled >{{ option.name }}</li>
     </ul>
+  </div>
+
+  <div v-show="selected_answer">
+    <p v-if="correct_answer">Correct</p>
+    <p v-else-if="!correct_answer">Incorrect</p>
+
+    <button @click="reloadComponent">Next</button>
   </div>
 </template>
 
 <script>
 export default {
+
+  name: 'PokemonOptions',
+
+  props: {
+    options: {
+      type: Array,
+      required: true
+    },
+    correct_pokemon: {
+      type: Number,
+      required: true
+    },
+    doShowPokemon: {
+      type: Function,
+      required: true
+    },
+    loadComponent: {
+      type: Function,
+      required: true
+    }
+  },
+
+  methods: {
+
+    checkOption(id) {
+      if ( this.selected_answer ) return
+      if ( id === this.correct_pokemon ) {
+        this.correct_answer = true
+        this.doShowPokemon()
+      }
+      this.selected_answer = true
+    },
+
+    reloadComponent() {
+      this.correct_answer = false
+      this.selected_answer = false
+      this.loadComponent()
+    }
+
+  },
+
+  created() {
+    this.correct_answer = false
+    this.selected_answer = false
+  },
+
+  data() {
+    return {
+
+      selected_answer: false,
+      correct_answer: false
+
+    }
+  }
 
 }
 </script>
